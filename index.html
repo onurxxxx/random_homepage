@@ -3,32 +3,36 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rastgele Site Yönlendirici</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rastgele Twitter Web Viewer</title>
   <meta name="robots" content="noindex, nofollow">
   <style>
     body {
       margin: 0;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       background: #111827;
-      color: white;
+      color: #f9fafb;
+      font-family: Arial, sans-serif;
     }
 
-    .container {
-      width: min(90%, 420px);
-      padding: 32px 24px;
+    main {
+      width: min(90%, 440px);
+      padding: 30px 24px;
       box-sizing: border-box;
       text-align: center;
       background: #1f2937;
       border-radius: 18px;
     }
 
-    h1 { font-size: 24px; }
+    h1 { font-size: 23px; }
 
-    p { color: #cbd5e1; line-height: 1.6; }
+    p {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
 
     a {
       color: #93c5fd;
@@ -38,7 +42,7 @@
     .loader {
       width: 36px;
       height: 36px;
-      margin: 24px auto;
+      margin: 25px auto;
       border: 4px solid #475569;
       border-top-color: #60a5fa;
       border-radius: 50%;
@@ -50,6 +54,7 @@
     }
 
     button {
+      margin-top: 16px;
       padding: 12px 18px;
       border: 0;
       border-radius: 9px;
@@ -63,20 +68,37 @@
   </style>
 </head>
 <body>
-  <main class="container">
-    <h1>Rastgele Site Yönlendirici</h1>
+  <main>
+    <h1>Rastgele Profil Yönlendirici</h1>
     <div class="loader" id="loader"></div>
-    <p id="message">Bir site seçiliyor, lütfen bekle...</p>
+    <p id="message">Rastgele profil seçiliyor...</p>
     <p id="destination"></p>
-    <button id="retry" hidden>Başka bir site seç</button>
+    <button id="retry" hidden>Başka profil seç</button>
   </main>
 
   <script>
-    // Kendi sitelerini bu listeye ekle.
+    // URL ve ağırlık bilgileri
     const sites = [
-      "https://example.com",
-      "https://www.wikipedia.org",
-      "https://www.mozilla.org"
+      { url: "https://twitterwebviewer.net/?user=ekonomimcom", weight: 9 },
+      { url: "https://twitterwebviewer.net/?user=gazeteoksijen", weight: 8 },
+      { url: "https://twitterwebviewer.net/?user=FT", weight: 6 },
+      { url: "https://twitterwebviewer.net/?user=iriscibrelos", weight: 11 },
+      { url: "https://twitterwebviewer.net/?user=gurkaynakgonenc", weight: 7 },
+      { url: "https://twitterwebviewer.net/?user=ahmetcigsar", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=mserdark", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=ozngndgdu", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=timursoykan", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=tvonlar", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=iktisatoplum", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=birikimdergisi", weight: 6 },
+      { url: "https://twitterwebviewer.net/?user=tebernkireci1", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=merkez_bankasi", weight: 6 },
+      { url: "https://twitterwebviewer.net/?user=ismailsaymaz", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=brianroemmele", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=scobleizer", weight: 6 },
+      { url: "https://twitterwebviewer.net/?user=santmanukyan", weight: 7 },
+      { url: "https://twitterwebviewer.net/?user=_kemalcan", weight: 5 },
+      { url: "https://twitterwebviewer.net/?user=e507", weight: 10 }
     ];
 
     function selectRandomSite() {
@@ -85,12 +107,16 @@
       const loader = document.getElementById("loader");
       const retry = document.getElementById("retry");
 
-      // Geçerli HTTP/HTTPS adreslerini al.
-      const validSites = sites.filter(address => {
+      // Yalnızca geçerli HTTP/HTTPS adreslerini ve
+      // pozitif ağırlıkları kullan.
+      const validSites = sites.filter(site => {
         try {
-          const url = new URL(address);
-          return url.protocol === "https:" ||
-                 url.protocol === "http:";
+          const url = new URL(site.url);
+          return (
+            (url.protocol === "https:" || url.protocol === "http:") &&
+            Number.isFinite(site.weight) &&
+            site.weight > 0
+          );
         } catch {
           return false;
         }
@@ -98,24 +124,37 @@
 
       if (validSites.length === 0) {
         loader.hidden = true;
-        message.textContent = "Henüz geçerli bir site eklenmedi.";
+        message.textContent = "Geçerli site bulunamadı.";
         retry.hidden = false;
         return;
       }
 
-      const selected =
-        validSites[Math.floor(Math.random() * validSites.length)];
+      const totalWeight = validSites.reduce(
+        (sum, site) => sum + site.weight, 0
+      );
 
-      message.textContent = "Seçilen siteye yönlendiriliyorsunuz...";
+      let random = Math.random() * totalWeight;
+      let selected = validSites[validSites.length - 1];
+
+      for (const site of validSites) {
+        random -= site.weight;
+
+        if (random < 0) {
+          selected = site;
+          break;
+        }
+      }
+
+      message.textContent = "Seçilen profile yönlendiriliyorsunuz...";
       destination.replaceChildren();
 
       const link = document.createElement("a");
-      link.href = selected;
-      link.textContent = selected;
+      link.href = selected.url;
+      link.textContent = selected.url;
       destination.appendChild(link);
 
-      // Seçilen adrese otomatik git.
-      window.location.replace(selected);
+      // Yönlendirmeyi başlat.
+      window.location.replace(selected.url);
     }
 
     document.getElementById("retry").addEventListener(
