@@ -63,8 +63,7 @@ input:focus{border-color:#5b91e5;box-shadow:0 0 0 3px #3478ed22}
 <main>
 
 <section class="random-card" aria-label="Rastgele profil">
-  <p>Listeden rastgele bir profil aç.</p>
-  <button id="randomButton" type="button">Rastgele profil aç</button>
+    <button id="randomButton" type="button">Rastgele profil aç</button>
   <div class="result" id="result" aria-live="polite">
     <span class="result-label">Açılan profil</span>
     <a id="selectedLink" href="#" target="_blank" rel="noopener noreferrer"></a>
@@ -73,7 +72,7 @@ input:focus{border-color:#5b91e5;box-shadow:0 0 0 3px #3478ed22}
 
 <section class="list-section" aria-labelledby="list-title">
   <div class="list-heading">
-    <h2 id="list-title">Profiller</h2>
+    
     <span class="count" id="count"></span>
   </div>
   <div class="search-wrap">
@@ -138,24 +137,24 @@ const sites=[
 ];
 
 const categories = [
-  {id:"ekonomi", name:"Ekonomi, Bankacılık & Piyasalar", handles:[
+  {id:"ekonomi", name:"Ekonomi", handles:[
     "ekonomimcom","FT","iriscibrelos","e507","santmanukyan","kerimrota","akinrota",
     "senolbabuscu","ali_hakan_kara","ahmetirfans",
     "guvsak","tebernkireci1","banka_dunyasi",
-    "PiyasaOttoman8a","merkez_bankasi"
+    "PiyasaOttoman8a","merkez_bankasi","@dzctzbt"
   ]},
-  {id:"haber", name:"Haber & Gündem", handles:[
+  {id:"haber", name:"Gündem", handles:[
     "gazeteoksijen","bosunatiklama","ismailsaymaz","ozngndgdu","lordsinov","timursoykan",
     "tvonlar","_kemalcan","samiltayyar27","61ramazanbasak","abdulkdir_selvi"
   ]},
-  {id:"teknoloji", name:"Teknoloji & Dijital", handles:[
-    "brianroemmele","scobleizer","mertcobanov"
+  {id:"teknoloji", name:"Teknoloji", handles:[
+    "brianroemmele","scobleizer","mertcobanov","mserdark"
   ]},
-  {id:"fikir", name:"Kültür, Fikir & Yayınlar", handles:[
-    "dzctzbt","iktisatoplum","yazarlarimiz","birikimdergisi"
+  {id:"fikir", name:"Yayınlar", handles:[
+    "iktisatoplum","yazarlarimiz","birikimdergisi"
   ]},
-  {id:"kesif", name:"Görsel & Keşif", handles:[
-    ,"gurkaynakgonenc","mserdark","ahmetcigsar",
+  {id:"kesif", name:"Keşif", handles:[
+    "gurkaynakgonenc","ahmetcigsar",
     "kaansezyum","gokhanyucel","buitengebieden"
   ]}
 ];
@@ -227,7 +226,7 @@ function render(filter=""){
     section.append(summary,grid);list.append(section);
     visible+=shown.length;
   });
-  count.textContent=visible+" / "+validSites.length+" profil";
+  
   if(!visible){const e=document.createElement("div");e.className="empty";e.textContent="Eşleşen profil bulunamadı.";list.append(e);}
 }
 function randomSite(){
