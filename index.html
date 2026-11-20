@@ -215,8 +215,8 @@ function render(filter=""){
     const shown=matches.filter(s=>activeCategory==="all"||activeCategory===group.id);
     const section=document.createElement("details");section.className="category";
     section.hidden=shown.length===0;
-    section.open=Boolean(q) && shown.length>0;
-    if(!q && activeCategory===group.id)section.open=true;
+section.open=shown.length>0;
+section.dataset.category=group.id;
     const summary=document.createElement("summary");
     const title=document.createElement("span");title.className="category-name";title.textContent=group.name;
     const badge=document.createElement("span");badge.className="category-count";badge.textContent=shown.length+" profil";
